@@ -77,7 +77,8 @@ export default defineConfig(({ command, mode }) => {
         output: {
           manualChunks: {
             'vendor': ['vue', 'vue-router'],
-            'firebase': ['firebase'],
+            'firebase-app': ['firebase/app'],
+            'firebase-firestore': ['firebase/firestore'],
             'qr': ['qrcode', 'jsqr'],
           },
         },
