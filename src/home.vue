@@ -1,244 +1,376 @@
 <template>
-  <div class="min-h-screen bg-gray-100 p-4">
-    <div class="max-w-6xl mx-auto">
-      <h1 class="text-3xl font-bold text-center mb-8">Food Tracker - QR Codes</h1>
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <!-- Mobile-First Header -->
+    <header class="bg-white/90 backdrop-blur-md shadow-sm border-b border-white/30 sticky top-0 z-10">
+      <div class="max-w-7xl mx-auto px-4 py-4 sm:py-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+              <span class="text-white text-xl sm:text-2xl">🍽️</span>
+            </div>
+            <div>
+              <h1 class="text-xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Food Tracker
+              </h1>
+              <p class="text-gray-600 text-xs sm:text-sm hidden sm:block">QR Code Meal Management</p>
+            </div>
+          </div>
+          <div class="hidden lg:flex items-center space-x-2 text-sm text-gray-600">
+            <span class="flex items-center space-x-1">
+              <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              <span>Online</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </header>
 
+    <transition name="fade">
+      <div v-if="toast.show" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 px-4 w-full max-w-md">
+        <div :class="['w-full rounded-full px-5 py-3 text-white shadow-xl ring-1 ring-white/30 flex items-center justify-center gap-3 text-sm sm:text-base animate-bounce', toast.gradient]">
+          <span class="text-2xl">{{ toast.icon }}</span>
+          <span class="font-semibold">{{ toast.message }}</span>
+        </div>
+      </div>
+    </transition>
+
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6 sm:space-y-8">
       <!-- QR Code Input Section -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h2 class="text-xl font-semibold mb-4">Scan or Enter QR Code</h2>
-
-        <!-- Scan Mode Toggle -->
-        <div class="mb-4">
-          <div class="flex gap-2">
-            <button
-              @click="scanMode = 'manual'"
-              :class="[
-                'px-4 py-2 rounded font-medium transition-colors',
-                scanMode === 'manual'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              ]"
-            >
-              Manual Input
-            </button>
-            <button
-              @click="scanMode = 'camera'"
-              :class="[
-                'px-4 py-2 rounded font-medium transition-colors',
-                scanMode === 'camera'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              ]"
-            >
-              Camera Scan
-            </button>
-          </div>
+      <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/30 overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6">
+          <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+            <span class="text-2xl">📱</span>
+            <span>Scan or Enter QR Code</span>
+          </h2>
         </div>
 
-        <!-- Manual Input Mode -->
-        <div v-if="scanMode === 'manual'" class="flex flex-col md:flex-row gap-4 items-end">
-          <div class="flex-1">
-            <label class="block text-sm font-medium mb-2">Enter QR Code ID:</label>
-            <input
-              v-model="inputQrId"
-              @keyup.enter="processQrCode"
-              placeholder="e.g., user001"
-              class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+        <div class="p-4 sm:p-6">
+          <!-- Scan Mode Toggle - Mobile Optimized -->
+          <div class="mb-4 sm:mb-6">
+            <div class="flex gap-1 sm:gap-3 p-1 bg-gray-100 rounded-xl w-full sm:w-fit mx-auto">
+              <button
+                @click="scanMode = 'manual'"
+                :class="[
+                  'flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-all duration-300 flex items-center justify-center space-x-1 sm:space-x-2 text-sm sm:text-base',
+                  scanMode === 'manual'
+                    ? 'bg-white text-blue-600 shadow-md transform scale-105'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                ]"
+              >
+                <span class="text-base sm:text-lg">✏️</span>
+                <span class="hidden xs:inline">Manual</span>
+                <span class="xs:hidden">Type</span>
+              </button>
+              <button
+                @click="scanMode = 'camera'"
+                :class="[
+                  'flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-all duration-300 flex items-center justify-center space-x-1 sm:space-x-2 text-sm sm:text-base',
+                  scanMode === 'camera'
+                    ? 'bg-white text-green-600 shadow-md transform scale-105'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                ]"
+              >
+                <span class="text-base sm:text-lg">📷</span>
+                <span class="hidden xs:inline">Camera</span>
+                <span class="xs:hidden">Scan</span>
+              </button>
+            </div>
           </div>
-          <button
-            @click="processQrCode"
-            :disabled="!inputQrId.trim() || isProcessing"
-            class="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
-          >
-            {{ isProcessing ? 'Processing...' : 'Process QR Code' }}
-          </button>
-        </div>
 
-        <!-- Camera Scan Mode -->
-        <div v-if="scanMode === 'camera'" class="text-center">
-          <button
-            @click="startScanning"
-            :disabled="isScanning"
-            class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-400 mb-4"
-          >
-            {{ isScanning ? 'Scanning... (Point camera at QR code)' : 'Start Camera Scan' }}
-          </button>
-
-          <div class="mb-4">
-            <div class="relative border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-100 p-4 max-w-md mx-auto">
-              <p class="text-sm text-gray-600 mb-2">
-                {{ isMobile ? 'Position QR code within the camera frame' : 'Position QR code in front of camera' }}
-              </p>
-              <p class="text-xs text-gray-500 mb-2">
-                Camera will automatically detect QR codes, or use "Capture & Scan" for manual detection
-              </p>
-              <video
-                ref="videoRef"
-                class="w-full h-48 object-cover rounded border border-gray-400"
-                :class="{ 'opacity-0': !isScanning }"
-                autoplay
-                playsinline
-                muted
-              ></video>
-              <div v-if="!isScanning" class="absolute inset-0 flex items-center justify-center text-gray-500 bg-gray-50">
-                <p class="text-sm">Camera will appear here when started</p>
+          <!-- Manual Input Mode -->
+          <div v-if="scanMode === 'manual'" class="space-y-4">
+            <div class="space-y-3">
+              <label class="text-sm font-semibold text-gray-700 flex items-center space-x-2">
+                <span>🔢</span>
+                <span>QR Code ID</span>
+              </label>
+              <div class="flex flex-col sm:flex-row gap-3">
+                <input
+                  v-model="inputQrId"
+                  @keyup.enter="processQrCode"
+                  placeholder="user001"
+                  class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-300 text-base sm:text-lg"
+                >
+                <button
+                  @click="processQrCode"
+                  :disabled="!inputQrId.trim() || isProcessing"
+                  class="px-6 sm:px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-semibold flex items-center justify-center space-x-2 min-w-[120px] sm:min-w-[140px]"
+                >
+                  <span v-if="isProcessing" class="animate-spin">⏳</span>
+                  <span v-else>🚀</span>
+                  <span class="hidden sm:inline">{{ isProcessing ? 'Processing...' : 'Process' }}</span>
+                  <span class="sm:hidden">{{ isProcessing ? '...' : 'Go' }}</span>
+                </button>
               </div>
             </div>
-            <!-- file input fallback -->
-            <div class="mt-2 text-center">
-              <label class="cursor-pointer inline-block px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 text-xs">
-                📁 Upload image
-                <input type="file" accept="image/*" @change="handleFileScan" class="hidden" />
-              </label>
+          </div>
+
+          <!-- Camera Scan Mode -->
+          <div v-if="scanMode === 'camera'" class="space-y-4 sm:space-y-6">
+            <!-- Start Scan Button - Mobile Optimized -->
+            <div class="text-center">
+              <button
+                @click="startScanning"
+                :disabled="isScanning"
+                class="w-full sm:w-auto px-6 sm:px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 disabled:from-gray-400 disabled:to-gray-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-semibold text-base sm:text-lg flex items-center justify-center space-x-2 mx-auto"
+              >
+                <span v-if="isScanning" class="animate-pulse text-xl">📷</span>
+                <span v-else class="text-xl">🎥</span>
+                <span>{{ isScanning ? 'Scanning...' : 'Start Camera Scan' }}</span>
+              </button>
+            </div>
+
+            <!-- Camera Viewport -->
+            <div class="bg-gray-50 rounded-xl p-4 sm:p-6 border-2 border-dashed border-gray-300 relative overflow-hidden">
+              <div class="text-center mb-3 sm:mb-4">
+                <p class="text-sm text-gray-600 mb-1 flex items-center justify-center space-x-2">
+                  <span>📍</span>
+                  <span class="text-center">{{ isMobile ? 'Position QR code within frame' : 'Position QR code in front of camera' }}</span>
+                </p>
+                <p class="text-xs text-gray-500 hidden sm:block">Camera will automatically detect QR codes</p>
+              </div>
+              <div class="relative mb-4">
+                <video
+                  ref="videoRef"
+                  class="w-full h-48 sm:h-64 object-cover rounded-lg border-2 border-gray-400 shadow-inner mx-auto"
+                  :class="{ 'opacity-0': !isScanning }"
+                  autoplay
+                  playsinline
+                  muted
+                ></video>
+                <div v-if="!isScanning" class="absolute inset-0 flex items-center justify-center text-gray-500 bg-gray-100 rounded-lg">
+                  <div class="text-center p-4">
+                    <span class="text-3xl sm:text-4xl mb-2 block">📷</span>
+                    <p class="text-sm">Tap "Start Camera Scan" above</p>
+                  </div>
+                </div>
+              </div>
+              <!-- File upload fallback -->
+              <div class="text-center">
+                <label class="cursor-pointer inline-flex items-center space-x-2 px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors duration-300 text-sm font-medium">
+                  <span>📁</span>
+                  <span>Upload Image</span>
+                  <input type="file" accept="image/*" @change="handleFileScan" class="hidden" />
+                </label>
+              </div>
+            </div>
+
+            <div v-if="cameraError || cameraStatus" class="text-center p-4 bg-red-50 rounded-xl border border-red-200">
+              <p v-if="cameraError" class="text-red-600 font-medium flex items-center justify-center space-x-2">
+                <span>❌</span>
+                <span>Camera Error: {{ cameraError }}</span>
+              </p>
+              <p v-if="cameraStatus && !cameraError" class="text-gray-600 flex items-center justify-center space-x-2">
+                <span class="animate-pulse">🔄</span>
+                <span>{{ cameraStatus }}</span>
+              </p>
+              <button v-if="cameraError" @click="retryCamera" class="mt-3 text-blue-500 underline text-sm hover:text-blue-700 transition-colors">
+                🔄 Retry
+              </button>
+            </div>
+
+            <div v-if="isScanning" class="text-center space-y-4">
+              <div class="flex items-center justify-center space-x-2 mb-4">
+                <div class="animate-pulse w-4 h-4 bg-green-500 rounded-full"></div>
+                <span class="text-sm text-green-600 font-medium">{{ cameraStatus }}</span>
+              </div>
+              <div class="flex justify-center space-x-4">
+                <button
+                  @click="stopScanning"
+                  class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 font-medium flex items-center space-x-2"
+                >
+                  <span>⏹️</span>
+                  <span>Stop Scanning</span>
+                </button>
+                <button
+                  @click="captureAndScan"
+                  class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 font-medium flex items-center space-x-2"
+                >
+                  <span>📸</span>
+                  <span>Capture & Scan</span>
+                </button>
+              </div>
             </div>
           </div>
 
-          <div v-if="cameraError || cameraStatus" class="text-center p-2 mb-4">
-            <p v-if="cameraError" class="text-red-500">Camera Error: {{ cameraError }}</p>
-            <p v-if="cameraStatus" class="text-gray-600">{{ cameraStatus }}</p>
-            <button v-if="cameraError" @click="retryCamera" class="mt-1 text-blue-500 underline text-sm">Retry</button>
-          </div>
-
-          <div v-if="isScanning" class="text-center">
-            <div class="flex items-center justify-center mb-2">
-              <div class="animate-pulse w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-              <span class="text-sm text-green-600">{{ cameraStatus }}</span>
-            </div>
-            <button
-              @click="stopScanning"
-              class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 mr-2"
-            >
-              Stop Scanning
-            </button>
-            <button
-              @click="captureAndScan"
-              class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Capture & Scan
-            </button>
-          </div>
+          <p class="text-sm text-gray-600 mt-4 flex items-center space-x-2">
+            <span>💡</span>
+            <span>Use camera scanning or manually enter the user ID to process meals</span>
+          </p>
         </div>
-
-        <p class="text-sm text-gray-600 mt-2">
-          Use camera scanning or manually enter the user ID to process meals
-        </p>
       </div>
 
       <!-- User Meal Section -->
-      <div v-if="user" class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <div class="text-center mb-6">
-          <h2 class="text-2xl font-semibold">{{ user.name }}</h2>
-          <p class="text-gray-500">{{ user.qrId }}</p>
+      <div v-if="user" class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/30 overflow-hidden">
+        <div class="bg-gradient-to-r from-green-500 to-teal-600 p-4 sm:p-6">
+          <h2 class="text-lg sm:text-xl font-bold text-white flex items-center space-x-2">
+            <span class="text-xl sm:text-2xl">👤</span>
+            <span>Today's Meals</span>
+          </h2>
         </div>
 
-        <div class="text-center">
-          <h3 class="text-lg font-semibold mb-4">Today's Meals</h3>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <div class="p-4 sm:p-6">
+          <div class="text-center mb-6 sm:mb-8">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
+              <span class="text-white text-xl sm:text-2xl font-bold">{{ user.name.charAt(0) }}</span>
+            </div>
+            <h3 class="text-lg sm:text-2xl font-bold text-gray-800">{{ user.name }}</h3>
+            <p class="text-gray-500 font-medium text-sm sm:text-base">{{ user.qrId }}</p>
+          </div>
+
+          <div class="text-center">
+            <div class="grid grid-cols-3 gap-3 sm:gap-6 max-w-lg sm:max-w-2xl mx-auto">
+              <button
+                @click="giveMeal('breakfast')"
+                :disabled="userBreakfast"
+                :class="[
+                  'p-4 sm:p-6 rounded-xl font-bold text-sm sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex flex-col items-center space-y-2 sm:space-y-3 active:scale-95',
+                  userBreakfast
+                    ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-2 border-gray-300'
+                    : 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:from-yellow-500 hover:to-orange-600 border-2 border-yellow-300',
+                  recentlySavedMeal === 'breakfast' ? 'ring-4 ring-yellow-200/80 animate-pulse' : ''
+                ]"
+              >
+                <span class="text-2xl sm:text-3xl">{{ userBreakfast ? '✅' : '🌅' }}</span>
+                <span class="text-xs sm:text-sm">{{ userBreakfast ? 'Done' : 'Breakfast' }}</span>
+              </button>
+              <button
+                @click="giveMeal('lunch')"
+                :disabled="userLunch"
+                :class="[
+                  'p-4 sm:p-6 rounded-xl font-bold text-sm sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex flex-col items-center space-y-2 sm:space-y-3 active:scale-95',
+                  userLunch
+                    ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-2 border-gray-300'
+                    : 'bg-gradient-to-r from-green-400 to-green-600 text-white hover:from-green-500 hover:to-green-700 border-2 border-green-300',
+                  recentlySavedMeal === 'lunch' ? 'ring-4 ring-emerald-200/80 animate-pulse' : ''
+                ]"
+              >
+                <span class="text-2xl sm:text-3xl">{{ userLunch ? '✅' : '☀️' }}</span>
+                <span class="text-xs sm:text-sm">{{ userLunch ? 'Done' : 'Lunch' }}</span>
+              </button>
+              <button
+                @click="giveMeal('dinner')"
+                :disabled="userDinner"
+                :class="[
+                  'p-4 sm:p-6 rounded-xl font-bold text-sm sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex flex-col items-center space-y-2 sm:space-y-3 active:scale-95',
+                  userDinner
+                    ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-2 border-gray-300'
+                    : 'bg-gradient-to-r from-purple-400 to-pink-600 text-white hover:from-purple-500 hover:to-pink-700 border-2 border-purple-300',
+                  recentlySavedMeal === 'dinner' ? 'ring-4 ring-purple-200/80 animate-pulse' : ''
+                ]"
+              >
+                <span class="text-2xl sm:text-3xl">{{ userDinner ? '✅' : '🌙' }}</span>
+                <span class="text-xs sm:text-sm">{{ userDinner ? 'Done' : 'Dinner' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="text-center mt-6 sm:mt-8">
             <button
-              @click="giveMeal('breakfast')"
-              :disabled="userBreakfast"
-              :class="[
-                'px-6 py-3 rounded-lg font-semibold transition-colors text-lg',
-                userBreakfast
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-500 text-white hover:bg-blue-600'
-              ]"
+              @click="resetUser"
+              class="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-semibold text-sm sm:text-base flex items-center justify-center space-x-2 mx-auto"
             >
-              {{ userBreakfast ? '✓ Breakfast Given' : 'Give Breakfast' }}
-            </button>
-            <button
-              @click="giveMeal('lunch')"
-              :disabled="userLunch"
-              :class="[
-                'px-6 py-3 rounded-lg font-semibold transition-colors text-lg',
-                userLunch
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-green-500 text-white hover:bg-green-600'
-              ]"
-            >
-              {{ userLunch ? '✓ Lunch Given' : 'Give Lunch' }}
-            </button>
-            <button
-              @click="giveMeal('dinner')"
-              :disabled="userDinner"
-              :class="[
-                'px-6 py-3 rounded-lg font-semibold transition-colors text-lg',
-                userDinner
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-orange-500 text-white hover:bg-orange-600'
-              ]"
-            >
-              {{ userDinner ? '✓ Dinner Given' : 'Give Dinner' }}
+              <span>🔄</span>
+              <span>New User</span>
             </button>
           </div>
-        </div>
-
-        <div class="text-center mt-6">
-          <button
-            @click="resetUser"
-            class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-          >
-            Process Another User
-          </button>
         </div>
       </div>
 
       <!-- QR Codes Display Section -->
-      <div class="mb-6 flex flex-wrap gap-4 items-center justify-center">
-        <div class="flex items-center gap-2">
-          <label class="text-sm font-medium">Search Users:</label>
-          <input 
-            v-model="searchQuery" 
-            @input="currentPage = 1"
-            placeholder="e.g., user002"
-            class="px-3 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-          <button 
-            v-if="searchQuery"
-            @click="searchQuery = ''"
-            class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600"
-          >
-            Clear
-          </button>
-        </div>
+      <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/30 p-4 sm:p-6">
+        <div class="flex flex-col gap-4 mb-6">
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-800 flex items-center space-x-2">
+            <span class="text-xl sm:text-2xl">🔍</span>
+            <span>QR Code Directory</span>
+          </h2>
 
-        <div class="flex items-center gap-2">
-          <label class="text-sm font-medium">Users per page:</label>
-          <select v-model="usersPerPage" @change="currentPage = 1" class="px-3 py-1 border rounded">
-            <option :value="50">50</option>
-            <option :value="100">100</option>
-            <option :value="200">200</option>
-            <option :value="500">500</option>
-          </select>
-        </div>
+          <div class="flex flex-col gap-4">
+            <!-- Search Bar -->
+            <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+              <label class="text-sm font-semibold text-gray-700 flex items-center space-x-2 min-w-fit">
+                <span>🔎</span>
+                <span>Search:</span>
+              </label>
+              <div class="flex gap-2 flex-1">
+                <input
+                  v-model="searchQuery"
+                  @input="currentPage = 1"
+                  placeholder="user001"
+                  class="flex-1 px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-300 text-sm sm:text-base"
+                >
+                <button
+                  v-if="searchQuery"
+                  @click="searchQuery = ''"
+                  class="px-3 py-2 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                >
+                  ❌ Clear
+                </button>
+              </div>
+            </div>
 
-        <div class="flex items-center gap-2">
-          <button @click="prevPage" :disabled="currentPage === 1" class="px-3 py-1 bg-blue-500 text-white rounded disabled:bg-gray-300">Previous</button>
-          <span class="text-sm">Page {{ currentPage }} of {{ totalPages }}</span>
-          <button @click="nextPage" :disabled="currentPage === totalPages" class="px-3 py-1 bg-blue-500 text-white rounded disabled:bg-gray-300">Next</button>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <label class="text-sm font-medium">Go to page:</label>
-          <input v-model.number="gotoPage" @keyup.enter="goToPage" type="number" min="1" :max="totalPages" class="px-3 py-1 border rounded w-16">
-          <button @click="goToPage" class="px-3 py-1 bg-green-500 text-white rounded">Go</button>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
-        <div v-for="user in paginatedUsers" :key="user.qrId" class="bg-white p-4 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow">
-          <div class="mb-2">
-            <img :src="user.qrCode" :alt="`QR Code for ${user.name}`" class="w-full h-auto max-w-24 mx-auto cursor-pointer" @click="processQrCode(user.qrId)" />
+            <!-- Per Page Selector -->
+            <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+              <label class="text-sm font-semibold text-gray-700 flex items-center space-x-2 min-w-fit">
+                <span>📊</span>
+                <span>Per page:</span>
+              </label>
+              <select v-model="usersPerPage" @change="currentPage = 1" class="px-3 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-300 text-sm sm:text-base">
+                <option :value="12">12</option>
+                <option :value="20">20</option>
+                <option :value="50">50</option>
+                <option :value="100">100</option>
+              </select>
+            </div>
           </div>
-          <p class="text-sm font-medium">{{ user.name }}</p>
-          <p class="text-xs text-gray-500">{{ user.qrId }}</p>
-          <button
-            @click="processQrCode(user.qrId)"
-            class="mt-2 text-xs text-blue-500 hover:text-blue-700 underline"
-          >
-            Select
-          </button>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="flex flex-col gap-3 sm:gap-4 items-center justify-center mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 rounded-xl">
+          <!-- Page Navigation -->
+          <div class="flex items-center gap-2">
+            <button @click="prevPage" :disabled="currentPage === 1" class="px-2 py-1.5 sm:px-3 sm:py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-300 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:transform-none flex items-center space-x-1 text-xs sm:text-sm">
+              <span>⬅️</span>
+              <span class="hidden sm:inline">Previous</span>
+            </button>
+            <span class="text-xs sm:text-sm font-medium text-gray-700 px-2 py-1.5 sm:px-3 sm:py-2 bg-white rounded-lg shadow-sm min-w-[100px] sm:min-w-[120px] text-center">
+              Page {{ currentPage }} of {{ totalPages }}
+            </span>
+            <button @click="nextPage" :disabled="currentPage === totalPages" class="px-2 py-1.5 sm:px-3 sm:py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-300 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:transform-none flex items-center space-x-1 text-xs sm:text-sm">
+              <span class="hidden sm:inline">Next</span>
+              <span>➡️</span>
+            </button>
+          </div>
+
+          <!-- Go to Page -->
+          <div class="flex items-center gap-2">
+            <label class="text-xs sm:text-sm font-semibold text-gray-700">Go to page:</label>
+            <input v-model.number="gotoPage" @keyup.enter="goToPage" type="number" min="1" :max="totalPages" class="px-2 py-1.5 sm:px-3 sm:py-2 border-2 border-gray-200 rounded-lg w-12 sm:w-16 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-300 text-xs sm:text-sm">
+            <button @click="goToPage" class="px-2 py-1.5 sm:px-3 sm:py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-xs sm:text-sm">
+              Go
+            </button>
+          </div>
+        </div>
+
+        <!-- QR Code Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-2 sm:gap-3 lg:gap-4">
+          <div v-for="user in paginatedUsers" :key="user.qrId" class="bg-white p-2 sm:p-3 rounded-lg sm:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 group active:scale-95">
+            <div class="mb-1 sm:mb-2 flex justify-center">
+              <img :src="user.qrCode" :alt="`QR Code for ${user.name}`" class="w-full h-auto max-w-12 sm:max-w-14 md:max-w-16 mx-auto cursor-pointer rounded border-2 border-gray-200 group-hover:border-blue-300 transition-all duration-300" @click="processQrCode(user.qrId)" />
+            </div>
+            <div class="text-center">
+              <p class="text-xs font-semibold text-gray-800 mb-0.5 truncate px-0.5" :title="user.name">{{ user.name }}</p>
+              <p class="text-xs text-gray-500 mb-1 sm:mb-2 truncate px-0.5" :title="user.qrId">{{ user.qrId }}</p>
+              <button
+                @click="processQrCode(user.qrId)"
+                class="w-full px-1.5 py-1 sm:px-2 sm:py-1.5 text-xs bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded hover:from-blue-600 hover:to-blue-700 active:from-blue-700 active:to-blue-800 transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 active:scale-95 font-medium flex items-center justify-center space-x-1 touch-manipulation"
+              >
+                <span class="text-sm">👆</span>
+                <span class="hidden sm:inline">Select</span>
+                <span class="sm:hidden">Tap</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -257,7 +389,7 @@ import QRCode from 'qrcode';
 // fails to recognize.
 
 const users = ref([]);
-const usersPerPage = ref(100);
+const usersPerPage = ref(20);
 const currentPage = ref(1);
 const gotoPage = ref(1);
 const user = ref(null);
@@ -272,6 +404,29 @@ const isScanning = ref(false);
 const cameraError = ref(null);
 const cameraStatus = ref(''); // holds human-readable status messages for camera operations
 const videoRef = ref(null);
+
+// Success toast + meal animation state
+const toast = ref({ show: false, message: '', icon: '✅', gradient: 'from-emerald-400 to-lime-500' });
+const recentlySavedMeal = ref(null);
+const toastTimeout = ref(null);
+const mealPulseTimeout = ref(null);
+
+function showSuccessToast(message, icon, gradient = 'from-emerald-400 to-lime-500') {
+  if (toastTimeout.value) clearTimeout(toastTimeout.value);
+  toast.value = { show: true, message, icon, gradient };
+  toastTimeout.value = setTimeout(() => {
+    toast.value.show = false;
+  }, 2200);
+}
+
+function highlightMeal(mealType) {
+  if (mealPulseTimeout.value) clearTimeout(mealPulseTimeout.value);
+  recentlySavedMeal.value = mealType;
+  mealPulseTimeout.value = setTimeout(() => {
+    recentlySavedMeal.value = null;
+  }, 2000);
+}
+
 // jsQR will be loaded lazily
 const scanTimeout = ref(null);
 const isMobile = ref(false);
@@ -461,7 +616,14 @@ async function giveMeal(mealType) {
     if (mealType === 'dinner') userDinner.value = true;
     console.log('Meal given successfully');
 
-    alert(`${mealType.charAt(0).toUpperCase() + mealType.slice(1)} recorded successfully!`);
+    const mealLabels = {
+      breakfast: { icon: '🥐', message: 'Breakfast saved!', gradient: 'from-yellow-400 via-orange-400 to-red-400' },
+      lunch: { icon: '🥗', message: 'Lunch saved!', gradient: 'from-emerald-400 via-teal-400 to-sky-500' },
+      dinner: { icon: '🍽️', message: 'Dinner saved!', gradient: 'from-purple-500 via-pink-500 to-red-500' }
+    };
+    const toastConfig = mealLabels[mealType] || mealLabels.breakfast;
+    showSuccessToast(toastConfig.message, toastConfig.icon, toastConfig.gradient);
+    highlightMeal(mealType);
 
   } catch (error) {
     console.error('Error updating meal:', error);
