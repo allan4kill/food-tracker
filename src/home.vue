@@ -227,8 +227,8 @@
                   'p-4 sm:p-6 rounded-xl font-bold text-sm sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex flex-col items-center space-y-2 sm:space-y-3 active:scale-95',
                   userBreakfast
                     ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-2 border-gray-300'
-                    : 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:from-yellow-500 hover:to-orange-600 border-2 border-yellow-300',
-                  recentlySavedMeal === 'breakfast' ? 'ring-4 ring-yellow-200/80 animate-pulse' : ''
+                    : 'bg-gradient-to-r from-orange-700 to-orange-900 text-white hover:from-orange-800 hover:to-orange-950 border-2 border-orange-600',
+                  recentlySavedMeal === 'breakfast' ? 'ring-4 ring-orange-200/80 animate-pulse' : ''
                 ]"
               >
                 <span class="text-2xl sm:text-3xl">{{ userBreakfast ? '✅' : '🌅' }}</span>
@@ -241,7 +241,7 @@
                   'p-4 sm:p-6 rounded-xl font-bold text-sm sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex flex-col items-center space-y-2 sm:space-y-3 active:scale-95',
                   userLunch
                     ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-2 border-gray-300'
-                    : 'bg-gradient-to-r from-green-400 to-green-600 text-white hover:from-green-500 hover:to-green-700 border-2 border-green-300',
+                    : 'bg-gradient-to-r from-green-700 to-green-900 text-white hover:from-emerald-800 hover:to-emerald-900 border-2 border-green-800',
                   recentlySavedMeal === 'lunch' ? 'ring-4 ring-emerald-200/80 animate-pulse' : ''
                 ]"
               >
@@ -255,7 +255,7 @@
                   'p-4 sm:p-6 rounded-xl font-bold text-sm sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex flex-col items-center space-y-2 sm:space-y-3 active:scale-95',
                   userDinner
                     ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-2 border-gray-300'
-                    : 'bg-gradient-to-r from-purple-400 to-pink-600 text-white hover:from-purple-500 hover:to-pink-700 border-2 border-purple-300',
+                    : 'bg-gradient-to-r from-orange-700 to-green-900 text-white hover:from-orange-800 hover:to-green-950 border-2 border-purple-800',
                   recentlySavedMeal === 'dinner' ? 'ring-4 ring-purple-200/80 animate-pulse' : ''
                 ]"
               >
@@ -448,7 +448,7 @@ const detectMobile = () => {
 const generateUsers = async () => {
   const userList = [];
   // QR code generation is CPU intensive
-  const userCount = 1000;
+  const userCount = 1500;
   
   for (let i = 1; i <= userCount; i++) {
     const qrId = `user${i.toString().padStart(3, '0')}`;
@@ -617,9 +617,9 @@ async function giveMeal(mealType) {
     console.log('Meal given successfully');
 
     const mealLabels = {
-      breakfast: { icon: '🥐', message: 'Breakfast saved!', gradient: 'from-yellow-400 via-orange-400 to-red-400' },
-      lunch: { icon: '🥗', message: 'Lunch saved!', gradient: 'from-emerald-400 via-teal-400 to-sky-500' },
-      dinner: { icon: '🍽️', message: 'Dinner saved!', gradient: 'from-purple-500 via-pink-500 to-red-500' }
+      breakfast: { icon: '🥐', message: 'Breakfast saved!', gradient: 'from-orange-700 via-orange-800 to-orange-900' },
+      lunch: { icon: '🥗', message: 'Lunch saved!', gradient: 'from-green-700 via-emerald-800 to-teal-900' },
+      dinner: { icon: '🍽️', message: 'Dinner saved!', gradient: 'from-orange-700 via-amber-800 to-green-900' }
     };
     const toastConfig = mealLabels[mealType] || mealLabels.breakfast;
     showSuccessToast(toastConfig.message, toastConfig.icon, toastConfig.gradient);
