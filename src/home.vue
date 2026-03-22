@@ -1,7 +1,7 @@
-<!---
+
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-    <!-- Mobile-First Header -->
+    <!-- Mobile-First Header --->
     <header class="bg-white/90 backdrop-blur-md shadow-sm border-b border-white/30 sticky top-0 z-10">
       <div class="max-w-7xl mx-auto px-4 py-4 sm:py-6">
         <div class="flex items-center justify-between">
@@ -378,7 +378,7 @@
   </div>
 </template>
 
-<script setup>
+
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { db } from './firebase';
 import { doc, getDoc, updateDoc, setDoc, getDocs, collection } from "firebase/firestore";
