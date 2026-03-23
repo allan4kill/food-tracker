@@ -1,6 +1,7 @@
 
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+  <div v-if="blankMode" class="min-h-screen bg-white"></div>
+  <div v-else class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
     <!-- Mobile-First Header --->
     <header class="bg-white/90 backdrop-blur-md shadow-sm border-b border-white/30 sticky top-0 z-10">
       <div class="max-w-7xl mx-auto px-4 py-4 sm:py-6">
@@ -378,7 +379,7 @@
   </div>
 </template>
 
-
+<script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { db } from './firebase';
 import { doc, getDoc, updateDoc, setDoc, getDocs, collection } from "firebase/firestore";
@@ -398,6 +399,7 @@ const userBreakfast = ref(false);
 const userLunch = ref(false);
 const userDinner = ref(false);
 const inputQrId = ref('');
+const blankMode = ref(true); // true shows blank white page placeholder
 const searchQuery = ref('');
 const isProcessing = ref(false);
 const scanMode = ref('manual'); // 'manual' or 'camera'
